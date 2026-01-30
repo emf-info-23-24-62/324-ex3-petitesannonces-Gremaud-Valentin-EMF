@@ -1,0 +1,36 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DATABASE: db_annonces
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: userpwd
+      PORT: 3000
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3006:3006"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: db_annonces
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: userpwd
+    volumes:
+      - db_data:/var/lib/data
+      - ./backend/db/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+
+volumes:
+  db_data:
